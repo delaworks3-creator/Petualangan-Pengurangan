@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Game Pengurangan - Mem Dela</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #fff3c4, #d9f7ff);
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+}
+
+.game {
+  max-width: 650px;
+  margin: auto;
+  background: white;
+  padding: 25px;
+  border-radius: 25px;
+  box-shadow: 0 5px 20px #999;
+}
+
+h1 {
+  color: #ff6b35;
+  margin-bottom: 5px;
+}
+
+.identity {
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.picture {
+  font-size: 80px;
+  margin: 15px;
+}
+
+.story {
+  font-size: 22px;
+  line-height: 1.5;
+  min-height: 100px;
+}
+
+.question {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 20px;
+}
+
+button {
+  display: block;
+  width: 80%;
+  margin: 12px auto;
+  padding: 15px;
+  font-size: 24px;
+  border: none;
+  border-radius: 15px;
+  background: #74b9ff;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0984e3;
+}
+
+#feedback {
+  font-size: 25px;
+  font-weight: bold;
+  min-height: 40px;
+}
+
+#next {
+  background: #55efc4;
+  color: #145a32;
+  display: none;
+}
+
+#score {
+  font-size: 20px;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+<h1>🍎 Petualangan Pengurangan 🍎</h1>
+
+<div class="identity">
+  <b>Mem Dela</b><br>
+  Kelas 2<br>
+  SD Negeri 71 Maluku Tengah
+</div>
+
+<div id="score">Soal 1 dari 5</div>
+
+<div class="picture" id="picture">🍎🍎🍎🍎🍎🍎🍎</div>
+
+<div class="story" id="story"></div>
+
+<div class="question" id="question"></div>
+
+<div id="answers"></div>
+
+<div id="feedback"></div>
+
+<button id="next" onclick="nextQuestion()">➡️ Soal Berikutnya</button>
+
+</div>
+
+<script>
+
+const questions = [
+
+{
+ picture: "🍎🍎🍎🍎🍎🍎🍎",
+ story: "Ani mempunyai 7 apel. Ani memberikan 3 apel kepada temannya.",
+ question: "Berapa apel Ani sekarang?",
+ answers: ["3", "4", "5"],
+ correct: "4"
+},
+
+{
+ picture: "🍪🍪🍪🍪🍪🍪",
+ story: "Budi mempunyai 6 kue. Ia memberikan 2 kue kepada adiknya.",
+ question: "Berapa kue Budi sekarang?",
+ answers: ["3", "4", "5"],
+ correct: "4"
+},
+
+{
+ picture: "🐟🐟🐟🐟🐟",
+ story: "Siti mempunyai 5 ikan. Sebanyak 1 ikan diberikan kepada ibunya.",
+ question: "Berapa ikan Siti sekarang?",
+ answers: ["3", "4", "5"],
+ correct: "4"
+},
+
+{
+ picture: "🎈🎈🎈🎈🎈🎈🎈🎈",
+ story: "Rina mempunyai 8 balon. Sebanyak 5 balon pecah.",
+ question: "Berapa balon Rina yang tersisa?",
+ answers: ["2", "3", "4"],
+ correct: "3"
+},
+
+{
+ picture: "🍊🍊🍊🍊🍊🍊🍊🍊🍊",
+ story: "Doni mempunyai 9 jeruk. Ia memberikan 4 jeruk kepada kakaknya.",
+ question: "Berapa jeruk Doni sekarang?",
+ answers: ["4", "5", "6"],
+ correct: "5"
+}
+
+];
+
+let current = 0;
+let score = 0;
+
+function loadQuestion() {
+
+  const q = questions[current];
+
+  document.getElementById("score").innerText =
+    "Soal " + (current + 1) + " dari 5";
+
+  document.getElementById("picture").innerText = q.picture;
+
+  document.getElementById("story").innerText = q.story;
+
+  document.getElementById("question").innerText =
+    q.question;
+
+  document.getElementById("feedback").innerText = "";
+
+  document.getElementById("next").style.display = "none";
+
+  const answers = document.getElementById("answers");
+
+  answers.innerHTML = "";
+
+  q.answers.forEach(answer => {
+
+    const button = document.createElement("button");
+
+    button.innerText = answer;
+
+    button.onclick = () => checkAnswer(answer);
+
+    answers.appendChild(button);
+
+  });
+
+}
+
+function speak(text) {
+
+  const speech = new SpeechSynthesisUtterance(text);
+
+  speech.lang = "id-ID";
+
+  speech.rate = 0.9;
+
+  speech.pitch = 1.1;
+
+  speechSynthesis.cancel();
+
+  speechSynthesis.speak(speech);
+
+}
+
+function checkAnswer(answer) {
+
+  const q = questions[current];
+
+  if (answer === q.correct) {
+
+    score++;
+
+    document.getElementById("feedback").innerText =
+      "🎉 Hebat! Jawabanmu benar!";
+
+    speak("Hebat! Jawabanmu benar!");
+
+  } else {
+
+    document.getElementById("feedback").innerText =
+      "🌸 Belum tepat. Coba lagi!";
+
+    speak("Belum tepat. Coba lagi!");
+
+    return;
+  }
+
+  document.querySelectorAll("#answers button")
+    .forEach(button => button.disabled = true);
+
+  document.getElementById("next").style.display = "block";
+}
+
+function nextQuestion() {
+
+  current++;
+
+  if (current < questions.length) {
+
+    loadQuestion();
+
+  } else {
+
+    document.querySelector(".game").innerHTML = `
+
+      <h1>🏆 Selesai! 🏆</h1>
+
+      <div class="identity">
+        <b>Mem Dela</b><br>
+        Kelas 2<br>
+        SD Negeri 71 Maluku Tengah
+      </div>
+
+      <div style="font-size:80px;">🌟🎉🌟</div>
+
+      <h2>Skormu</h2>
+
+      <div style="font-size:45px;">
+        ${score} / 5
+      </div>
+
+      <p style="font-size:25px;">
+        ${score === 5
+          ? "Luar biasa! Semua benar! 🤩"
+          : "Hebat! Terus berlatih ya! 💪"}
+      </p>
+
+      <button onclick="location.reload()">
+        🔄 Main Lagi
+      </button>
+
+    `;
+
+    speak("Permainan selesai. Hebat!");
+
+  }
+
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
